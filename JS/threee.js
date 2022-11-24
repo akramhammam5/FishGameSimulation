@@ -40,8 +40,9 @@ Box = new THREE.Mesh(BoxGeo,Material); //Geometry + material
 
 scene1.add(Box);
 
-assestload = new FBXLoader();
-assestload.load(fishimport.href,function(fbx)
+fbxload = new FBXLoader();
+const path = require('./uploads_files_2454913_Carp.fbx');
+fbxload.load(path,function(fbx)
 {
     const model = fbx.scene1;
     scene1.add(model);
