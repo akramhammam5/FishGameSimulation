@@ -2,9 +2,12 @@
 import * as THREE from 'three';
 import { AxesHelper, BoxGeometry, Light, PerspectiveCamera } from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
-fishimport = new URL('./uploads_files_2454913_Carp.fbx', import.meta.url);
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
+
+const fish = new URL('./shiny_fish.glb',import.meta.url);
+
+const sea = new URL('./anchor_on_the_sea_floor.glb',import.meta.url);
 //Add and animate all the stuff in a web page space using webgl.
 const renderer = new THREE.WebGLRenderer();
 
@@ -15,14 +18,14 @@ document.body.appendChild(renderer.domElement);
 
 
 
-const camera = new THREE.PerspectiveCamera( 5, window.innerWidth / window.innerHeight, 1, 500 );
+const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 500 );
 
-//orbit = new OrbitControls(camera , renderer.domElement);
+orbit = new OrbitControls(camera , renderer.domElement);
 
-camera.position.set( 0, 2, 125 );
+camera.position.set( 0, 5, 100 );
 
 //Call upadate method every time camera position is changed.
-//orbit.update();
+orbit.update();
 
 camera.lookAt( 0, 0, 0 );
 
@@ -32,43 +35,37 @@ const scene1 = new THREE.Scene();
 
 //Defining components of a Box.
 
-BoxGeo = new THREE.BoxGeometry(); //Geometry 
 
-Material = new THREE.MeshStandardMaterial({color:0x0FF00F}); //Material
+const loader = new GLTFLoader();
 
-Box = new THREE.Mesh(BoxGeo,Material); //Geometry + material
-
-scene1.add(Box);
-
-fbxload = new FBXLoader();
-const path = require('./uploads_files_2454913_Carp.fbx');
-fbxload.load(path,function(fbx)
-{
-    const model = fbx.scene1;
+loader.load(fish.href,function(gltf){
+    const model = gltf.scene;
     scene1.add(model);
-    model.position.set(0,0,0);
-},undefined);
+    model.position.set(-5,-10,9)
+},undefined,function(error){
+    console.log("error");
+})
 
-//Rotating the shape with animation
-function Animate()
-{
-    //Rotating the shape with 0.01 rads.
-    
-    Box.rotation.y += 0.01;
-    Box.rotation.x += 0.01;
-    renderer.render(scene1,camera);
-}
 
-light = new THREE.AmbientLight(0x555555);
+loader.load(sea.href,function(gltf){
+    const model1 = gltf.scene;
+    scene1.add(model1);
+    model1.position.set(-12,5,-50)
+},undefined,function(error){
+    console.log("error");
+})
 
+
+light = new THREE.AmbientLight(0xFFFFFF);
 scene1.add(light);
+Dlight = new THREE.DirectionalLight(0xFFFFFF, 5);
+scene1.add(Dlight);
+function animate() {
+    requestAnimationFrame( animate );
+    renderer.render( scene1, camera );
+}
+animate();
 
-dLight= new THREE.DirectionalLight(0xFFFFFF,0.8);
-scene1.add(dLight);
-
-
-
-renderer.setAnimationLoop(Animate);
 
 
 
