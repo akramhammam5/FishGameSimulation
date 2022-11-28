@@ -100,16 +100,6 @@ var x=1;
             model.visible=true;
         }
         
-        // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(changes), gl.STATIC_DRAW);
-
-        // color = [Math.random(), Math.random(), Math.random(), 1];
-        // var colorLocation = gl.getUniformLocation(shaderProgram, "u_color");
-        // gl.uniform4fv(colorLocation, color);
-
-        // gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        // gl.clear(gl.COLOR_BUFFER_BIT);
-        // gl.drawArrays(gl.POINTS, 0, 1);
-        
       };
 
 function animate() {
