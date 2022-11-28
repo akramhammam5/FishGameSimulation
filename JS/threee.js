@@ -83,34 +83,36 @@ var x=1;
 		else if(e.keyCode == '40')//Down
             model.position.y-=1;
         else if(e.keyCode == '73')//i 
+
         {   
-            //x+=0.1;
-        //     y+=0.1;
-        //     z+=0.1;
-        //     model.scale.set(x,y,z);
-        model.visible=false;
+            x+=0.1;
+            y+=0.1;
+            z+=0.1;
+         model.scale.set(x,y,z);
+        //model.visible=false;
 
         }
         else if(e.keyCode == '68')//d
         {   
-            //x-=0.1;
-        //     y-=0.1;
-        //     z-=0.1;
-        //     model.scale.set(x,y,z);
-            model.visible=true;
+            x-=0.1;
+             y-=0.1;
+            z-=0.1;
+            model.scale.set(x,y,z);
+            //model.visible=true;
         }
+
         
       };
 
 function animate() {
     
     requestAnimationFrame( animate );
-    // z+=0.0001;
-    // if(z>=0){
-    //     z=-30;
-    // }
+     z+=0.0001;
+     if(z>=0){
+         z=-30;
+     }
 
-    // model1.translateZ(z);
+     model1.translateZ(z);
     
     renderer.render( scene1, camera );
 }
@@ -121,5 +123,5 @@ var rotateOctpus = function(){
     model1.translateZ(+1);
     renderer.render(scene1, camera);
     };
-//rotateOctpus();
+rotateOctpus();
 animate();
