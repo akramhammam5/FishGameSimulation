@@ -4,7 +4,7 @@ import { AxesHelper, BoxGeometry, Light, PerspectiveCamera } from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-import sea from './underwater/WhatsApp Image 2022-11-28 at 2.38.57 AM.jpeg';
+import sea from './underwater-world-ocean-corals-light-11570012516i3q0gtwkal.jpeg';
 
 const fish = new URL('./shiny_fish.glb',import.meta.url);
 
