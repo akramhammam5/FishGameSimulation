@@ -21,7 +21,7 @@ const kingfish = new URL('./Kingfish.glb',import.meta.url);
 
 
 
-//Add and animate all the stuff in a web page space using webgl.
+
 const renderer = new THREE.WebGLRenderer(); //ben-create render ashan kol mab3ml function baktb b3dha render ashan yrsm el object
 
 //All over the page.
