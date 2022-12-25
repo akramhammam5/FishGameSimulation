@@ -4,7 +4,7 @@ import { AxesHelper, BoxGeometry, Light, PerspectiveCamera } from 'three'; //kol
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';//orbitcontrol ashan n3rf nstkhdm elmouse input
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';//ashan ykhliny a3rf anzl el gltf wnzlha ka objects
 
-import sea from './underwater-world-ocean-corals-light-11570012516i3q0gtwkal.jpeg'; 
+//import sea from './WhatsApp Image 2022-12-22 at 10.07.39 PM.jpeg'; 
 
 const fish = new URL('./shiny_fish.glb',import.meta.url); //constant variables bn3mlha create ashan n2dr nnady 3aliha taht fel code
 
@@ -14,7 +14,7 @@ const octopus = new URL('./happy_octopus.glb',import.meta.url);
 
 const goldfish = new URL('./Goldfish.glb',import.meta.url);
 
-const starfish = new URL('./Starfish.glb',import.meta.url);
+const particle = new URL('./the_fish_particle.glb',import.meta.url);
 
 const kingfish = new URL('./Kingfish.glb',import.meta.url);
 
@@ -49,7 +49,7 @@ const scene1 = new THREE.Scene();//bnhot gwa el objects
 
 //Defining components of a Box.
 textureloader = new THREE.TextureLoader();
-scene1.background = textureloader.load(sea);
+//scene1.background = textureloader.load(sea);
 
 const loader = new GLTFLoader();//da ashan nhot el objects nfsha
 
@@ -117,11 +117,12 @@ loader.load(goldfish.href,function(gltf){
     console.log("error");
 })
 
-loader.load(starfish.href,function(gltf){
+loader.load(particle.href,function(gltf){
     model3 = gltf.scene;
     scene1.add(model3);
     
     model3.position.set(-30,-10,-20)
+    
 },function(error){
     console.log("error");
 })
@@ -160,7 +161,106 @@ function removeOctopus(){
        renderer.render(scene1,camera);
        
    };
+   function init() {
+    
+    skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
+    skybox = new THREE.Mesh(skyboxGeo);
+    scene1.add(skybox);
+  
+    animate();
+   }
+   function animate() {
 
+    skybox.rotation.x += 0.005;
+
+    skybox.rotation.y += 0.005;
+
+    renderer.render(scene1, camera);
+
+    requestAnimationFrame(animate);
+
+}
+   function sky()
+   {
+    const ft = new THREE.TextureLoader().load("./skybox/1-2640955885.jpg");
+
+    const bk = new THREE.TextureLoader().load("./skybox/empty-underwater-blue-shine-abstract-background-light-bright-clean-ocean-sea_1284-42065.webp");
+
+    const lf = new THREE.TextureLoader().load("./skybox/172898-3351646972.jpg");
+
+    const dn = new THREE.TextureLoader().load("./skybox/th-2059325924.jpg");
+
+    const rt = new THREE.TextureLoader().load("./skybox/sand-under-sea-abstract-marine-design-template-blue-deep-ocean-180905891.jpg");
+
+    const up = new THREE.TextureLoader().load("./skybox/underwater-background-under-sea-surface-water-texture-unusual-backdrop-37742852.jpg");
+   }
+   function createPathStrings(filename) {
+    const basePath = "./skybox/";
+    const baseFilename = basePath + filename;
+    const fileType = ".jpg";
+    const sides = ["ft", "bk", "up", "dn", "rt", "lf"];
+    const pathStings = sides.map(side => {
+        return baseFilename + "_" + side + fileType;
+    });
+    
+    return pathStings;
+    }
+
+
+function createMaterialArray(filename) {
+
+  const skyboxImagepaths = createPathStrings(filename);
+
+  const materialArray = skyboxImagepaths.map(image => {
+
+    let texture = new THREE.TextureLoader().load(image);
+
+
+    return texture;
+
+  });
+
+  return materialArray;
+
+
+}
+function createMaterialArray(filename) {
+
+    const skyboxImagepaths = createPathStrings(filename);
+    
+    const materialArray = skyboxImagepaths.map(image => {
+    
+        let texture = new THREE.TextureLoader().load(image);
+    
+    
+        return new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }); // <---
+    
+    });
+    
+    return materialArray;
+    
+    }
+
+    const skyboxImage = 'purplenebula';
+
+
+function init() {
+
+
+
+
+  const materialArray = createMaterialArray(skyboxImage);
+
+  skyboxGeo = new THREE.BoxGeometry(10000, 10000, 10000);
+
+  skybox = new THREE.Mesh(skyboxGeo, materialArray);
+
+  scene1.add(skybox);
+
+
+  animate();
+
+}
 	document.onkeydown = function(e) {
 		if(e.keyCode == '38')//Up
             model.position.y+=0.5;
@@ -216,7 +316,7 @@ var rotateGoldfish = function(){
     model3.rotateY(0.5);
     model3.translateZ(+2);
     renderer.render(scene1, camera);
-
 }; */
 rotateGoldfish();
-//rotateStarfish();
+init();
+//rotateStarfish()
