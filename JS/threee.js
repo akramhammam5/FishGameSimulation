@@ -2,11 +2,13 @@
 import * as THREE from 'three';
 import { AxesHelper, BoxGeometry, Light, PerspectiveCamera } from 'three'; //kol elhagat elmabein el braces dol bn3mlhom import mn threejs library
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls.js';//orbitcontrol ashan n3rf nstkhdm elmouse input
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';//ashan ykhliny a3rf anzl el gltf wnzlha ka objects
+import { GLTFLoader, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';//ashan ykhliny a3rf anzl el gltf wnzlha ka objects
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader";
+import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils';
 
-//import sea from './WhatsApp Image 2022-12-22 at 10.07.39 PM.jpeg'; 
+import sea from './WhatsApp Image 2022-12-22 at 10.07.39 PM.jpeg'; 
 
-const fish = new URL('./shiny_fish.glb',import.meta.url); //constant variables bn3mlha create ashan n2dr nnady 3aliha taht fel code
+const fish = new URL('./clown_fish.glb',import.meta.url); //constant variables bn3mlha create ashan n2dr nnady 3aliha taht fel code
 
 //const sea2 = new URL('./animated_ocean_scene_tutorial_example_1.glb',import.meta.url);
 
@@ -17,6 +19,35 @@ const goldfish = new URL('./Goldfish.glb',import.meta.url);
 const particle = new URL('./the_fish_particle.glb',import.meta.url);
 
 const kingfish = new URL('./Kingfish.glb',import.meta.url);
+
+
+
+const loading = new THREE.LoadingManager();
+
+const progressBar = document.getElementById('progress');
+
+
+/*loading.onStart = function(url, item , total)
+{
+    console.log(`Started loading: ${url}`);
+}*/
+
+loading.onProgress = function(url, loaded, total)
+{
+    progressBar.value = (loaded / total ) * 100;
+}
+
+const progressBarContainer = document.querySelector('.progress-bar');
+loading.onLoad = function(url, item, total)
+{
+    progressBarContainer.style.display = 'none';
+}
+
+
+/*loading.onError = function(url)
+{
+    console.log(`Got a problem loading: ${url}`);
+}*/
 
 
 
@@ -49,9 +80,9 @@ const scene1 = new THREE.Scene();//bnhot gwa el objects
 
 //Defining components of a Box.
 textureloader = new THREE.TextureLoader();
-//scene1.background = textureloader.load(sea);
+scene1.background = textureloader.load(sea);
 
-const loader = new GLTFLoader();//da ashan nhot el objects nfsha
+const loader = new GLTFLoader(loading);//da ashan nhot el objects nfsha
 
 // const geometry = new THREE.BoxGeometry( 1, 1, 1 );
 // const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
@@ -63,11 +94,13 @@ const loader = new GLTFLoader();//da ashan nhot el objects nfsha
 // action.play();
 //action.play();
 // Save this mixer somewhere
-   
+
 loader.load(fish.href,function(gltf){//load de function gahza btakhod aktr mn perameter el fish.href ashan ageib refrence bta3 object whoto wfunction(gltf) bnstkhdmo ashan nhot el object gwa elscene w nzboto
     model = gltf.scene;
     scene1.add(model);//bthotly el object fel scene
-    model.position.set(0,0,-30);
+    model.position.set(0,0,-20);
+    //model.rotation.x = 150;
+    //model.rotation.y = 100;
 },function(error){
     console.log("error");
 })
@@ -110,12 +143,43 @@ loader.load(octopus.href,function(gltf){
 
 loader.load(goldfish.href,function(gltf){
     model2 = gltf.scene;
-    scene1.add(model2);
+    //scene1.add(model2);
     
-    model2.position.set(-100,50,-200)
-},function(error){
+   // model2.position.set(-100,50,-200)
+
+   //const clips = gltf.animations;
+   const fishes = new THREE.AnimationObjectGroup();
+   mixer = new THREE.AnimationMixer(fishes);
+   //const clip = THREE.AnimationClip.findByName(clips,'Fish_001_animate_preview');
+   //const action = mixer.clipAction(clip);
+   //action.play();
+    for(let i=0; i<50; i++)
+    {
+        const clone = SkeletonUtils.clone(model2);
+        clone.matrixAutoUpdate = false;
+        scene1.add(clone);
+        fishes.add(clone);
+
+    }
+}
+,
+function(error){
     console.log("error");
 })
+
+const clock = new THREE.Clock(); 
+
+function animate()
+{
+    const clockDelta = clock.getDelta();
+    if(mixer)
+        mixer.update(clockDelta);
+    const delta = time.update().getDelta();
+    entityManager.update(delta);
+    renderer.render(scene1,camera);
+}
+renderer.setAnimationLoop(animate);
+
 
 loader.load(particle.href,function(gltf){
     model3 = gltf.scene;
@@ -141,12 +205,14 @@ loader.load(kingfish.href,function(gltf){
 const ambientLight = new THREE.AmbientLight(0x333333); //create ambientLight
 scene1.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1);
+const directionalLight = new THREE.PointLight(0xFFFFFF, 1);
 scene1.add(directionalLight);
 directionalLight.position.set(3, 3, 3);
 var y=1;
 var z=1;
 var x=1;
+
+
 
 function removeOctopus(){
     //remove the red cube when the sphere collides with the red cube
@@ -180,71 +246,36 @@ function removeOctopus(){
     requestAnimationFrame(animate);
 
 }
-   function sky()
-   {
-    const ft = new THREE.TextureLoader().load("./skybox/1-2640955885.jpg");
+createMaterialArray();
+skyboxGeo=new THREE.BoxGeometry(10000,10000,10000);
+skybox=new THREE.Mesh(skyboxGeo,materialArray);
 
-    const bk = new THREE.TextureLoader().load("./skybox/empty-underwater-blue-shine-abstract-background-light-bright-clean-ocean-sea_1284-42065.webp");
+       scene1.add(skybox);
 
-    const lf = new THREE.TextureLoader().load("./skybox/172898-3351646972.jpg");
-
-    const dn = new THREE.TextureLoader().load("./skybox/th-2059325924.jpg");
-
-    const rt = new THREE.TextureLoader().load("./skybox/sand-under-sea-abstract-marine-design-template-blue-deep-ocean-180905891.jpg");
-
-    const up = new THREE.TextureLoader().load("./skybox/underwater-background-under-sea-surface-water-texture-unusual-backdrop-37742852.jpg");
-   }
-   function createPathStrings(filename) {
-    const basePath = "./skybox/";
-    const baseFilename = basePath + filename;
-    const fileType = ".jpg";
-    const sides = ["ft", "bk", "up", "dn", "rt", "lf"];
-    const pathStings = sides.map(side => {
-        return baseFilename + "_" + side + fileType;
-    });
-    
-    return pathStings;
-    }
-
-
-function createMaterialArray(filename) {
-
-  const skyboxImagepaths = createPathStrings(filename);
-
-  const materialArray = skyboxImagepaths.map(image => {
-
-    let texture = new THREE.TextureLoader().load(image);
-
-
-    return texture;
-
-  });
-
-  return materialArray;
+       			
+     animate();
+ 
+ 
+ function createMaterialArray(filename) {
+     const skyBoxImagepaths=[
+                           filename +'./'+filename+ '1-2640955885.jpg',
+                           filename +'./'+filename+ '172898-3351646972.jpg',
+                           filename +'./'+filename+ 'underwater-background-under-sea-surface-water-texture-unusual-backdrop-37742852.jpg',
+                           filename +'./'+filename+ 'th-2059325924.jpg',
+                           filename +'./'+filename+ 'sand-under-sea-abstract-marine-design-template-blue-deep-ocean-180905891.jpg',
+                           filename +'./'+filename+ 'empty-underwater-blue-shine-abstract-background-light-bright-clean-ocean-sea_1284-42065.webp'];
+materialArray=new Array();
+for (i=0;i<skyBoxImagepaths.length;i++){
+   texture=new THREE.TextureLoader().load(skyBoxImagepaths[i]);
+   materialArray[i]=new THREE.MeshBasicMaterial({map: texture,side: THREE.BackSide});
 
 
 }
-function createMaterialArray(filename) {
+return materialArray;
+}
+createMaterialArray();
 
-    const skyboxImagepaths = createPathStrings(filename);
-    
-    const materialArray = skyboxImagepaths.map(image => {
-    
-        let texture = new THREE.TextureLoader().load(image);
-    
-    
-        return new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }); // <---
-    
-    });
-    
-    return materialArray;
-    
-    }
-
-    const skyboxImage = 'purplenebula';
-
-
-function init() {
+/*function init() {
 
 
 
@@ -260,7 +291,7 @@ function init() {
 
   animate();
 
-}
+}*/
 	document.onkeydown = function(e) {
 		if(e.keyCode == '38')//Up
             model.position.y+=0.5;
@@ -291,7 +322,7 @@ function init() {
         removeOctopus();
         
       };
-
+    
     
 
 var rotateGoldfish = function(){
@@ -319,4 +350,6 @@ var rotateGoldfish = function(){
 }; */
 rotateGoldfish();
 init();
+
+//sky();
 //rotateStarfish()
